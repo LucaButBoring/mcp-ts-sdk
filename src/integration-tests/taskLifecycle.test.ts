@@ -7,7 +7,7 @@ import { McpServer } from '../server/mcp.js';
 import { StreamableHTTPServerTransport } from '../server/streamableHttp.js';
 import { CallToolResultSchema, CreateTaskResultSchema, ElicitRequestSchema, ElicitResultSchema, TaskSchema } from '../types.js';
 import { z } from 'zod';
-import { InMemoryTaskStore, InMemoryTaskMessageQueue } from '../examples/shared/inMemoryTaskStore.js';
+import { InMemoryTaskStore, InMemoryTaskMessageQueue } from '../experimental/tasks/stores/in-memory.js';
 import type { TaskRequestOptions } from '../shared/protocol.js';
 
 describe('Task Lifecycle Integration Tests', () => {
@@ -42,7 +42,7 @@ describe('Task Lifecycle Integration Tests', () => {
         );
 
         // Register a long-running tool using registerToolTask
-        mcpServer.registerToolTask(
+        mcpServer.experimental.tasks.registerToolTask(
             'long-task',
             {
                 title: 'Long Running Task',
@@ -96,7 +96,7 @@ describe('Task Lifecycle Integration Tests', () => {
         );
 
         // Register a tool that requires input via elicitation
-        mcpServer.registerToolTask(
+        mcpServer.experimental.tasks.registerToolTask(
             'input-task',
             {
                 title: 'Input Required Task',
@@ -396,7 +396,7 @@ describe('Task Lifecycle Integration Tests', () => {
     describe('Multiple Queued Messages', () => {
         it('should deliver multiple queued messages in order', async () => {
             // Register a tool that sends multiple server requests during execution
-            mcpServer.registerToolTask(
+            mcpServer.experimental.tasks.registerToolTask(
                 'multi-request-task',
                 {
                     title: 'Multi Request Task',
@@ -889,7 +889,7 @@ describe('Task Lifecycle Integration Tests', () => {
     describe('Task Cancellation with Queued Messages', () => {
         it('should clear queue and deliver no messages when task is cancelled before tasks/result', async () => {
             // Register a tool that queues messages but doesn't complete immediately
-            mcpServer.registerToolTask(
+            mcpServer.experimental.tasks.registerToolTask(
                 'cancellable-task',
                 {
                     title: 'Cancellable Task',
@@ -1086,7 +1086,7 @@ describe('Task Lifecycle Integration Tests', () => {
     describe('Continuous Message Delivery', () => {
         it('should deliver messages immediately while tasks/result is blocking', async () => {
             // Register a tool that queues messages over time
-            mcpServer.registerToolTask(
+            mcpServer.experimental.tasks.registerToolTask(
                 'streaming-task',
                 {
                     title: 'Streaming Task',
@@ -1303,7 +1303,7 @@ describe('Task Lifecycle Integration Tests', () => {
     describe('Terminal Task with Queued Messages', () => {
         it('should deliver queued messages followed by final result for terminal task', async () => {
             // Register a tool that completes quickly and queues messages before completion
-            mcpServer.registerToolTask(
+            mcpServer.experimental.tasks.registerToolTask(
                 'quick-complete-task',
                 {
                     title: 'Quick Complete Task',
